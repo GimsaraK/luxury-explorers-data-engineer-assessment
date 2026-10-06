@@ -17,8 +17,11 @@ validates it with Python, and loads it into PostgreSQL for analysis, with AWS S3
 │   ├── sample/            # 200-row preview of the raw dataset
 │   ├── processed/         # clean output per run (git-ignored)
 │   └── rejected/          # rejected + duplicate rows per run (git-ignored)
+├── infra/
+│   └── iam/etl-s3-policy.json # least-privilege IAM policy for the pipeline user
 ├── etl/
 │   ├── config.py          # settings from environment variables / .env
+│   ├── storage.py         # AWS S3 uploads (raw landing, processed, rejected)
 │   ├── extract.py         # read raw CSV as text, column check, file checksum
 │   ├── mappings.py        # canonical values, formats and cleaning policy
 │   ├── transform.py       # standardise, deduplicate, fill missing values
@@ -377,3 +380,43 @@ every one of those ~3,085 pages is a disk read, and the gap grows with the table
 - **Every index has a write cost.** The three `bookings` indexes add 6.4 MB and are maintained on
   every upsert. At this size the load is still about 7 seconds; at millions of rows, bulk loads
   would drop and rebuild the indexes, or load into partitions.
+
+## 4. AWS S3 integration
+
+The pipeline uses S3 in all three ways the brief lists:
+
+| When | What | S3 key |
+|---|---|---|
+| Right after extract, **before processing** | The raw input file exactly as received | `raw/dt=YYYY-MM-DD/hotel_bookings_raw.csv` |
+| After transform and validation | Clean output | `processed/dt=YYYY-MM-DD/bookings_clean_<run>.csv` |
+| After transform and validation | Backup of rejected and duplicate records | `rejected/dt=YYYY-MM-DD/rejected_<run>.csv`, `duplicates_<run>.csv` |
+
+Every object carries the `run-id` (and, for the raw file, its `sha256`) as S3 metadata. The raw
+and processed S3 URIs are stored on the run's row in `etl.pipeline_runs`, so each load can be
+traced back to the exact file in S3. The `dt=` prefixes are Hive-style partitions, so the bucket
+can later be queried directly with Athena or Spark.
+
+S3 is enabled when `S3_BUCKET` is set and skipped otherwise, or with `--no-s3`. A failed upload
+fails the run with a clear error.
+
+### Bucket setup
+
+- Region `ap-south-1`, **Block all public access** on, **versioning** on (re-uploading a file on
+  the same day keeps the previous version, which makes `rejected/` and `processed/` real backups).
+- Objects are written with server-side encryption (SSE-S3, `AES256`).
+
+### Security
+
+- **Least privilege IAM.** The pipeline runs as a dedicated IAM user `hotel-bookings-etl` with no
+  console access. Its only policy, [`infra/iam/etl-s3-policy.json`](infra/iam/etl-s3-policy.json),
+  allows `s3:PutObject` and `s3:GetObject` on `raw/*`, `processed/*` and `rejected/*`, and
+  `s3:ListBucket` limited to those prefixes. It cannot delete objects, change bucket settings,
+  or touch any other bucket or AWS service.
+- **Credentials from environment variables only.** boto3 reads `AWS_ACCESS_KEY_ID`,
+  `AWS_SECRET_ACCESS_KEY` and `AWS_DEFAULT_REGION` from the environment, which `etl/config.py`
+  loads from the git-ignored `.env`. [`.env.example`](.env.example) lists the variables with
+  empty values.
+- **No hardcoded secrets.** No key, password or account ID appears anywhere in the code.
+- In production the access key would be replaced by an IAM role (EC2/ECS task role, or an
+  Airflow connection backed by AWS Secrets Manager), so there would be no long-lived key at all.
+

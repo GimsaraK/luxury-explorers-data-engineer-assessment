@@ -96,14 +96,22 @@ def apply_schema(conn: Connection, *sql_paths: Path) -> None:
             log.info("Applied %s", path.name)
 
 
-def start_run(conn: Connection, run_id: uuid.UUID, source_file: str, sha256: str) -> None:
+def start_run(
+    conn: Connection,
+    run_id: uuid.UUID,
+    source_file: str,
+    sha256: str,
+    raw_s3_uri: str | None = None,
+    processed_s3_uri: str | None = None,
+) -> None:
     with conn, conn.cursor() as cur:
         cur.execute(
             """
-            INSERT INTO etl.pipeline_runs (run_id, started_at, status, source_file, source_sha256)
-            VALUES (%s, %s, 'running', %s, %s)
+            INSERT INTO etl.pipeline_runs
+                (run_id, started_at, status, source_file, source_sha256, raw_s3_uri, processed_s3_uri)
+            VALUES (%s, %s, 'running', %s, %s, %s, %s)
             """,
-            (str(run_id), datetime.now(timezone.utc), source_file, sha256),
+            (str(run_id), datetime.now(timezone.utc), source_file, sha256, raw_s3_uri, processed_s3_uri),
         )
 
 

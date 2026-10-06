@@ -29,6 +29,7 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Hotel bookings ETL pipeline")
     parser.add_argument("--input", type=Path, help="Raw CSV to process (default: RAW_DATA_PATH from .env)")
     parser.add_argument("--no-load", action="store_true", help="Skip the PostgreSQL load")
+    parser.add_argument("--no-s3", action="store_true", help="Skip the S3 uploads even if S3_BUCKET is set")
     parser.add_argument("--log-level", default="INFO", choices=["DEBUG", "INFO", "WARNING", "ERROR"])
     return parser.parse_args(argv)
 
@@ -75,11 +76,22 @@ def run(args: argparse.Namespace) -> int:
     log.info("Pipeline run %s started (log: %s)", run_id, log_path)
 
     counts: dict[str, int] = {}
+    s3_uris: dict[str, str] = {}
     conn = None
     try:
         with stage(log, "extract"):
             extracted = extract(source)
             counts["extracted"] = len(extracted.raw)
+
+        storage = None
+        if args.no_s3 or not settings.s3_bucket:
+            log.info("S3 uploads disabled (%s)", "--no-s3 set" if args.no_s3 else "S3_BUCKET not set")
+        else:
+            from etl.storage import S3Storage
+
+            storage = S3Storage(settings.s3_bucket, str(run_id))
+            with stage(log, "s3 raw landing"):
+                s3_uris["raw"] = storage.upload_raw(source, extracted.sha256)
 
         with stage(log, "transform"):
             transformed = transform(extracted.raw)
@@ -91,7 +103,11 @@ def run(args: argparse.Namespace) -> int:
             counts["rejected"] = len(rejected)
 
         with stage(log, "write outputs"):
-            write_outputs(settings, run_label, extracted.raw, validated.valid, rejected, transformed.duplicate_index)
+            paths = write_outputs(settings, run_label, extracted.raw, validated.valid, rejected, transformed.duplicate_index)
+
+        if storage is not None:
+            with stage(log, "s3 outputs"):
+                s3_uris.update(storage.upload_outputs(paths))
 
         if args.no_load:
             log.info("--no-load set: skipping PostgreSQL load")
@@ -101,7 +117,7 @@ def run(args: argparse.Namespace) -> int:
             with stage(log, "load"):
                 conn = load.connect(settings.pg_connect_kwargs())
                 load.apply_schema(conn, settings.schema_path, settings.indexes_path)
-                load.start_run(conn, run_id, str(source), extracted.sha256)
+                load.start_run(conn, run_id, str(source), extracted.sha256, s3_uris.get("raw"), s3_uris.get("clean"))
                 counts["loaded"] = load.load_bookings(conn, run_id, validated.valid, rejected)
                 load.vacuum_analyze(conn)
                 load.finish_run(conn, run_id, "success", counts)
@@ -126,6 +142,8 @@ def run(args: argparse.Namespace) -> int:
     log.info("  rows valid              %8s", f"{len(validated.valid):,}")
     if "loaded" in counts:
         log.info("  rows loaded (upserted)  %8s", f"{counts['loaded']:,}")
+    for name, uri in s3_uris.items():
+        log.info("  s3 %-20s %s", name, uri)
     return 0
 
 

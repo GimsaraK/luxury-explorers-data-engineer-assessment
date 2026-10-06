@@ -12,22 +12,52 @@ validates it with Python, and loads it into PostgreSQL for analysis, with AWS S3
 ```
 .
 ├── data/
-│   ├── source/        # original public dataset, unmodified
-│   ├── raw/           # generated raw/dirty dataset used as the ETL input
-│   └── sample/        # 200-row preview of the raw dataset
+│   ├── source/            # original public dataset, unmodified
+│   ├── raw/               # generated raw/dirty dataset used as the ETL input
+│   ├── sample/            # 200-row preview of the raw dataset
+│   ├── processed/         # clean output per run (git-ignored)
+│   └── rejected/          # rejected + duplicate rows per run (git-ignored)
+├── etl/
+│   ├── config.py          # settings from environment variables / .env
+│   ├── extract.py         # read raw CSV as text, column check, file checksum
+│   ├── mappings.py        # canonical values, formats and cleaning policy
+│   ├── transform.py       # standardise, deduplicate, fill missing values
+│   ├── validate.py        # business rules -> rejection reasons
+│   ├── load.py            # PostgreSQL: dimensions, COPY + upsert, audit tables
+│   └── logging_setup.py
 ├── scripts/
 │   └── make_raw_dataset.py
+├── sql/
+│   └── schema.sql         # star schema + etl audit tables
+├── tests/
+│   └── test_transform.py
+├── logs/                  # one log file per run (git-ignored)
+├── docker-compose.yml     # PostgreSQL 16
+├── run_pipeline.py        # pipeline entry point
+├── .env.example
 ├── requirements.txt
 └── README.md
 ```
 
 ## Setup
 
+Requirements: Python 3.10+ and Docker.
+
 ```bash
 python -m venv .venv
 .venv\Scripts\activate          # Windows  (source .venv/bin/activate on macOS/Linux)
 pip install -r requirements.txt
+
+cp .env.example .env            # then set PGPASSWORD to any strong value
+docker compose up -d            # PostgreSQL 16 on localhost:5433
+
+python run_pipeline.py          # run the ETL
+pytest                          # run the unit tests
 ```
+
+The database password and other settings are only ever read from environment variables
+(`.env` is git-ignored). `docker compose` uses the same `.env`, so the container and the
+pipeline always agree on credentials.
 
 ## 1. Base dataset
 
@@ -111,3 +141,156 @@ byte-identical. The rest differ only in formatting, so duplicates must be detect
 standardisation, not by comparing raw rows.
 
 A 200-row preview is committed at [`data/sample/hotel_bookings_raw_sample.csv`](data/sample/hotel_bookings_raw_sample.csv).
+
+## 2. ETL pipeline
+
+```bash
+python run_pipeline.py                  # extract -> transform -> validate -> load
+python run_pipeline.py --no-load        # same, but skip PostgreSQL (writes the output files only)
+python run_pipeline.py --input other.csv --log-level DEBUG
+```
+
+The command exits with code `0` on success and `1` on failure, so it can be scheduled
+directly by cron or an orchestrator.
+
+```mermaid
+flowchart LR
+    raw["Raw CSV"] --> extract["Extract"]
+    extract --> standardise["Standardise"]
+    standardise --> dedupe["Deduplicate"]
+    dedupe --> fill["Fill missing values"]
+    fill --> validate["Validate"]
+    validate -->|valid| load["Load to PostgreSQL"]
+    validate -->|invalid| rejected["Rejected records"]
+    dedupe -->|copies| duplicates["Duplicates file"]
+```
+
+### Extract ([`etl/extract.py`](etl/extract.py))
+
+Every column is read as text, so nothing is coerced before the cleaning rules see it. The file
+must contain all 20 expected columns, and its SHA-256 is recorded with the run so every load
+can be traced back to the exact input file.
+
+### Standardise ([`etl/transform.py`](etl/transform.py))
+
+| Field(s) | Rule |
+|---|---|
+| All text | Trim, collapse repeated spaces. `""`, `NA`, `N/A`, `NULL`, `null`, `none`, `-` become missing |
+| Categories (`hotel`, `meal`, `market_segment`, ...) | Matched case-insensitively to the canonical value (`CITY  HOTEL` becomes `City Hotel`). `meal = Undefined` becomes `SC` (the dataset defines both as "no meal") |
+| `is_canceled` | `1/0`, `yes/no`, `true/false`, `Y/N` become a boolean |
+| Integer columns | `2.0` becomes `2`; fractions such as `2.5` are invalid |
+| `adr` (price) | `€`, `EUR` and spaces removed, decimal comma converted (`98,00` becomes `98.00`) |
+| Dates | Each known format is tried in turn (`2015-07-01`, `01/07/2015`, `01-Jul-2015`, `2015/07/01`, `July 01, 2015`, plus timestamps and `01.07.2015` for the status date). Slash dates are day-first because the source system is European |
+| `country` | Resolved to ISO 3166-1 alpha-3 with `pycountry` (`prt`, `Portugal` and `PRT` all become `PRT`), plus `CN` to `CHN` and the retired `TMP` to `TLS` |
+
+Each standardiser also returns an **invalid** flag: the value was present but could not be parsed
+(e.g. `2016-02-30` or `TBD`). Missing and invalid values are handled differently: missing values
+may be filled with a default, invalid values are always rejected.
+
+### Deduplicate
+
+Duplicates are detected by `booking_id` **after** standardisation, because most copies only differ
+in formatting. For each booking the copy with the most populated fields is kept, so a copy whose
+price was blanked is replaced by a sibling that still has it. Removed copies are written to
+`data/rejected/duplicates_<run>.csv`.
+
+### Fill missing values
+
+| Field | Default | Why |
+|---|---|---|
+| `children` | `0` | Only 4 source rows; no children is the overwhelmingly common case |
+| `meal` | `SC` | Same meaning as the source's own `Undefined` |
+| `market_segment`, `customer_type` | `Undefined` | Keeps the booking for revenue analysis under an explicit "unknown" member |
+| `country` | `UNK` | An `Unknown` member of `dim_country`, so the foreign key never needs to be NULL |
+
+Missing `hotel`, `arrival_date`, `adr`, `adults` or `reservation_status_date` are **not** filled:
+inventing a price, date or guest count would distort revenue and occupancy figures, so those rows
+are rejected.
+
+### Validate ([`etl/validate.py`](etl/validate.py))
+
+Every rule mirrors a constraint in [`sql/schema.sql`](sql/schema.sql), so a row that passes Python
+validation cannot fail in the database. A row collects all reasons it fails, not just the first.
+
+| Reason code | Rule | Rows (seed 42) |
+|---|---|---|
+| `missing_<column>` | Required field is empty | 1,205 |
+| `invalid_<column>` | Value present but unparseable or not an allowed category | 27 |
+| `no_guests` | `adults + children + babies = 0` | 166 |
+| `negative_lead_time` | `lead_time < 0` | 78 |
+| `adr_out_of_range` | `adr < 0` or `adr > 1000` (the source has one booking at 5,400 and one at -6.38) | 2 |
+| `negative_nights`, `negative_guest_count` | Counts below zero | 0 |
+| `invalid_booking_id_format` | Not `BKG-` + 6 digits | 0 |
+| `cancellation_status_mismatch` | `is_canceled` must be true exactly for `Canceled` / `No-Show` | 0 |
+| `checkout_before_arrival` | A `Check-Out` status dated before arrival | 0 |
+| `cancellation_after_arrival` | A `Canceled` status dated after arrival | 0 |
+
+The zero-count rules were checked against the real source data, which satisfies them; they guard
+against bad future exports. Zero-night stays are allowed: all 715 in the source are priced at
+0, consistent with day-use or complimentary bookings.
+
+Rejected rows are written with their **original raw values**, the CSV line number and a
+`rejection_reasons` column to `data/rejected/rejected_<run>.csv`, and to `etl.rejected_records`
+in PostgreSQL (raw record as `JSONB`, reasons as `TEXT[]`).
+
+### Load ([`etl/load.py`](etl/load.py))
+
+1. Apply [`sql/schema.sql`](sql/schema.sql) (idempotent `CREATE ... IF NOT EXISTS`).
+2. Register the run in `etl.pipeline_runs` with status `running`.
+3. Upsert the dimension members and map their surrogate keys onto the clean rows.
+4. Stream the clean rows into a temporary staging table with `COPY`, the fastest bulk-load path
+   in PostgreSQL, instead of row-by-row `INSERT`s.
+5. Merge into `bookings` with `INSERT ... ON CONFLICT (booking_id) DO UPDATE`, so re-running the
+   pipeline updates rows in place and never duplicates them.
+6. Insert the rejected records, then mark the run `success` (or `failed` with the error message).
+
+Steps 3-6 run in **one transaction**: a failure rolls back the whole load, leaving the previous
+data untouched.
+
+### Schema ([`sql/schema.sql`](sql/schema.sql))
+
+```mermaid
+erDiagram
+    bookings }o--|| dim_hotel : hotel_id
+    bookings }o--|| dim_country : country_code
+    bookings }o--|| dim_market_segment : market_segment_id
+    bookings }o--|| dim_distribution_channel : distribution_channel_id
+    bookings }o--|| dim_customer_type : customer_type_id
+    bookings }o--|| pipeline_runs : etl_run_id
+    pipeline_runs ||--o{ rejected_records : run_id
+```
+
+- **`bookings`** (fact): one row per booking, `booking_id` primary key. Low-cardinality fixed code
+  sets (`meal`, `deposit_type`, `reservation_status`) are `CHECK`-constrained columns rather than
+  extra joins. `total_nights` and `revenue` (`adr x nights`, 0 when canceled) are stored generated
+  columns, so every query uses the same revenue definition.
+- **Dimensions**: `dim_hotel` (with type and location), `dim_country` (ISO code + name),
+  `dim_market_segment`, `dim_distribution_channel`, `dim_customer_type`.
+- **`etl` schema**: `pipeline_runs` (one row per run with status, input checksum and row counts)
+  and `rejected_records`.
+
+### Results (seed 42)
+
+| Stage | Rows |
+|---|---|
+| Extracted | 119,390 |
+| Duplicates removed | 31,994 |
+| Unique bookings | 87,396 |
+| Missing values filled | 2,612 |
+| Rejected | 1,470 |
+| **Loaded into `bookings`** | **85,926** |
+
+The full run takes about 20 seconds locally. Useful checks after a run:
+
+```sql
+SELECT status, rows_extracted, rows_duplicates, rows_rejected, rows_loaded
+FROM etl.pipeline_runs ORDER BY started_at DESC LIMIT 5;
+
+SELECT reason, count(*)
+FROM etl.rejected_records, unnest(reasons) AS reason
+GROUP BY reason ORDER BY 2 DESC;
+```
+
+```bash
+docker exec -it hotel_bookings_pg psql -U etl_user -d hotel_bookings
+```

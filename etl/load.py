@@ -89,10 +89,11 @@ def connect(connect_kwargs: dict[str, object]) -> Connection:
     return conn
 
 
-def apply_schema(conn: Connection, schema_path: Path) -> None:
+def apply_schema(conn: Connection, *sql_paths: Path) -> None:
     with conn, conn.cursor() as cur:
-        cur.execute(schema_path.read_text(encoding="utf-8"))
-    log.info("Schema applied from %s", schema_path.name)
+        for path in sql_paths:
+            cur.execute(path.read_text(encoding="utf-8"))
+            log.info("Applied %s", path.name)
 
 
 def start_run(conn: Connection, run_id: uuid.UUID, source_file: str, sha256: str) -> None:
@@ -222,6 +223,20 @@ def load_bookings(conn: Connection, run_id: uuid.UUID, clean: pd.DataFrame, reje
 
         _save_rejections(cur, run_id, rejected)
     return loaded
+
+
+def vacuum_analyze(conn: Connection) -> None:
+    """Reclaim the row versions replaced by the upsert and refresh planner statistics.
+
+    Index Only Scans can skip the table only for pages marked all-visible, which VACUUM sets.
+    """
+    conn.autocommit = True  # VACUUM cannot run inside a transaction block
+    try:
+        with conn.cursor() as cur:
+            cur.execute("VACUUM (ANALYZE) bookings")
+    finally:
+        conn.autocommit = False
+    log.info("VACUUM ANALYZE bookings completed")
 
 
 def _save_rejections(cur, run_id: uuid.UUID, rejected: pd.DataFrame) -> None:

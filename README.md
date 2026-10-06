@@ -420,3 +420,142 @@ fails the run with a clear error.
 - In production the access key would be replaced by an IAM role (EC2/ECS task role, or an
   Airflow connection backed by AWS Secrets Manager), so there would be no long-lived key at all.
 
+## 5. Scalability and architecture
+
+### Where the pipeline stands today
+
+Measured on the current 119,390-row file (single laptop, local PostgreSQL):
+
+| Stage | Time | Scales with |
+|---|---:|---|
+| Extract | 0.3 s | File size |
+| Transform + validate | 3.7 s | Rows (vectorised pandas) |
+| Load (COPY 0.8 s + upsert 4.6 s + vacuum) | 5.8 s | Rows touched, number of indexes |
+| S3 uploads (raw + outputs) | 12 s | Bytes uploaded, network |
+
+Every stage is linear, so 1M rows (about 125 MB of CSV) would take roughly 1.5-2 minutes with
+the code unchanged. The limit at that size is **memory**, not time: the raw file is read fully as
+text, which takes 149 MB for 119k rows, so about 1.25 GB at 1M rows before the transform makes
+its copies. The second problem is that each run re-upserts **all** history, so the load gets
+slower every day even if only a few thousand bookings changed.
+
+### Scaling to 1M+ records
+
+The changes below are listed in the order they would be made; each one is only needed once the
+previous one stops being enough.
+
+1. **Incremental loads instead of full reloads.** In production the source would send a daily
+   delta (new and changed bookings) to `raw/dt=YYYY-MM-DD/`. The pipeline processes only that
+   day's file, and the upsert touches only those rows. The input `sha256` is already stored in
+   `etl.pipeline_runs`, so a file that has already been loaded successfully can be skipped.
+2. **Chunked processing.** Read the CSV with `pd.read_csv(chunksize=200_000)` and run
+   standardise, fill and validate per chunk (none of these rules look at other rows), streaming
+   each chunk into the `COPY` staging table. Memory then stays flat whatever the file size.
+   Deduplication is the one step that needs every copy of a booking at once, so it moves into
+   SQL: rank the staged rows per `booking_id` by completeness, keep the first, then merge.
+3. **Columnar formats.** Write `processed/` as Parquet partitioned by date instead of CSV:
+   typically 5-10x smaller, typed, and readable by Athena, Spark or DuckDB without a database.
+   Polars or DuckDB can replace pandas for the transform on one machine up to tens of millions
+   of rows.
+4. **Distributed processing (tens of millions and beyond).** The same rules (they are already
+   isolated in `etl/mappings.py` and `etl/validate.py`) would run in Spark on AWS Glue, EMR or
+   Databricks, reading straight from `raw/` in S3. The bucket would become a **lakehouse**: the
+   `processed/` zone stored as a Delta Lake or Apache Iceberg table, which adds transactions,
+   schema enforcement and `MERGE` upserts on top of plain files in S3. The existing zones already
+   follow the medallion layout:
+
+   | Layer | This pipeline |
+   |---|---|
+   | Bronze (raw, as received) | `raw/dt=.../` |
+   | Silver (cleaned, validated) | `processed/dt=.../` as a Delta/Iceberg table |
+   | Gold (business aggregates) | The star schema and `agg_daily_revenue` (see below) |
+
+   PostgreSQL would keep serving the gold layer, or the fact table would move to a warehouse such
+   as Redshift.
+
+### Scheduling
+
+**cron** is enough for one daily job on one server. The pipeline already exits with `0` or
+`1`, and writes one log file per run:
+
+```bash
+# 02:00 every day
+0 2 * * * cd /opt/hotel-etl && .venv/bin/python run_pipeline.py >> logs/cron.log 2>&1
+```
+
+cron has no retries, dependencies, backfills or alerts, so in production this becomes an
+**Airflow DAG** running daily at 02:00:
+
+- **One task per stage:** wait for the day's file in `raw/dt=YYYY-MM-DD/` (S3 sensor), extract,
+  transform and validate, quality gate, load, then refresh aggregates. A failed task can be
+  retried on its own without re-running the stages before it.
+- **Retries with exponential backoff** (e.g. 3 attempts, starting at 5 minutes). They are safe
+  because every step is idempotent: re-uploading to S3 overwrites the same key (versioning keeps
+  the old copy), and the load is a single transaction with `ON CONFLICT` upserts.
+- **Backfills:** each run processes the S3 partition for its own run date, so reprocessing any
+  past day is just a re-run of that day (`catchup`).
+- **`max_active_runs=1`**, so two runs never load into `bookings` at the same time.
+- **Failure alerts** to Slack or email through `on_failure_callback`, and an SLA on the run time.
+- **Credentials** come from Airflow connections backed by AWS Secrets Manager, not from a `.env`
+  file.
+
+### How partitioning and indexing would evolve
+
+**PostgreSQL**
+
+- **Range-partition `bookings` by `arrival_date` (monthly).** All the analytical queries filter
+  on arrival date, so the planner skips every partition outside the requested range (partition
+  pruning). Each partition has its own small indexes and its own vacuum. Old months can be
+  detached or archived instantly instead of being deleted row by row, and a load only touches
+  the partitions it writes to. One trade-off: the primary key must include the partition key,
+  so it becomes `(booking_id, arrival_date)`. A booking whose arrival date changes then moves
+  partitions, which the upsert has to handle as a delete plus an insert.
+- **The covering indexes from section 3 stay**, created once on the parent table and inherited
+  by every partition, where each stays small.
+- **BRIN on the load or status date.** With incremental, time-ordered loads, the physical row
+  order follows the load date. A BRIN index is then a few kilobytes and replaces a B-tree for
+  "what changed recently" queries.
+- **Pre-aggregation for full-table questions.** q2 and q4 gained little from indexes because
+  they read most of the table. A summary table such as `agg_daily_revenue (date, hotel, segment,
+  country)`, refreshed by the pipeline for only the days it loaded, answers them from thousands
+  of rows instead of millions.
+- **Bulk-load tuning.** For large backfills: load into a new partition without indexes, build the
+  indexes afterwards, then attach the partition. Track index usage with `pg_stat_user_indexes`
+  and drop indexes nobody uses, because each one slows every write.
+
+**S3**
+
+- Keep the `dt=` ingestion-date partitions (already in place), store Parquet, and register the
+  zones in the AWS Glue Data Catalog so Athena can query raw and processed data directly.
+- Lifecycle rules move `raw/` to S3 Glacier after 90 days and expire old object versions, which
+  keeps storage costs flat as history grows.
+
+### Failure handling
+
+Already built in:
+
+| Failure | What happens now |
+|---|---|
+| Bad rows in an otherwise good file | Quarantined with reason codes in `data/rejected/`, `etl.rejected_records` and `s3://.../rejected/`. The rest of the file still loads |
+| Missing or renamed columns | Extract fails before anything is written |
+| Error during the load | The single transaction rolls back; the previous data stays intact and queryable |
+| Any failure | The run is marked `failed` with the error message in `etl.pipeline_runs`, the full trace is in `logs/`, and the process exits with `1` |
+| Re-running after a failure | Safe: upserts never duplicate rows, and the raw file in S3 can be replayed |
+| Accidental overwrite in S3 | Versioning keeps every previous object |
+
+Would be added for production:
+
+- **Retries with backoff** for transient errors only (network, S3 throttling, database
+  restarts): Airflow task retries plus boto3's `standard` retry mode. Data errors are not
+  retried; a retry would fail the same way.
+- **A data-quality gate before the load.** Fail the run if the rejection rate exceeds a threshold
+  (it is 1.7% today), or if the row count is far from the recent average. This stops a broken
+  export from overwriting good data, instead of loading it as "valid but wrong".
+- **Alerting** on failed runs, SLA misses and runs stuck in `running`, via Airflow callbacks or
+  CloudWatch alarms.
+- **Concurrency guard.** `max_active_runs=1` in Airflow, plus a PostgreSQL advisory lock in
+  `run_pipeline.py`, so two runs can never write to `bookings` at the same time.
+- **Replay of rejected records.** Once a rule or mapping is fixed, re-run the affected `dt=`
+  partitions from S3; the rejected rows then load through the normal path, with no manual edits
+  to the database.
+

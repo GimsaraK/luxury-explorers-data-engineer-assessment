@@ -489,3 +489,7 @@ Would be added for production:
 - **A data-quality gate** that stops the load if the rejection rate (1.7% today) or the row count
   looks wrong, so a broken export can't overwrite good data.
 - **Alerts** for failed or stuck runs.
+
+
+
+### The demo video file is stored in demo/Associate DE - Gimsara.mp4

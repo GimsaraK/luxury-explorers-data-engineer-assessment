@@ -1,0 +1,201 @@
+booking_id,hotel,is_canceled,lead_time,arrival_date,stays_in_weekend_nights,stays_in_week_nights,adults,children,babies,meal,country,market_segment,distribution_channel,deposit_type,customer_type,adr,total_of_special_requests,reservation_status,reservation_status_date
+BKG-025767,Resort Hotel,0,203,2016-12-02,2,5,2,0,0,BB,GBR,Direct,Direct,No Deposit,Transient,66.8,0,Check-Out,2016-12-09
+BKG-034077,City Hotel,1,82,2015-07-16,0,3,2,0,0,BB,PRT,Online TA,  TA/TO,No Deposit,Transient,76.5,0,Canceled,2015-07-16
+BKG-074287,City Hotel,0,25,2016-12-27,0,3,3,0,0,BB,BRA,Offline TA/TO,TA/TO,No Deposit,Transient-Party,60,1,Check-Out,2016-12-30
+BKG-058814,City Hotel,0,1,2016-03-09,0,1,1,0,0,BB,SWE,Online TA,TA/TO,No Deposit,Transient-Party,95,0,Check-Out,2016-03-10 00:00:00
+BKG-079559,City Hotel,0,70,2017-04-16,2,2,2,0,0,SC,GBR,Online TA,TA/TO,No Deposit,Transient,108,0,CHECK-OUT,20.04.2017
+BKG-080064,City Hotel,0,170,2017-04-27,0,3,2,0,0,BB,DEU,Online TA,TA/TO,no deposit,Transient,130.5,0,Check-Out,30/04/2017
+BKG-038182,City Hotel,1,21,2016-03-04,0,1,1,0,0,BB,SVN,Online TA,TA/TO,No Deposit,Transient-Party,85.00 EUR,0,Canceled,2016-02-26
+BKG-036518,City Hotel ,0,102,2015-10-16,0,2,2,0,0,HB,DEU,Offline TA/TO,TA/TO,No Deposit,Transient-Party,109,0,Check-Out,2015-10-18
+BKG-025424,Resort Hotel,0,55,19-Nov-2016,2,5,2,0,0,HB,GBR,Online TA,TA/TO,No Deposit,Transient,67.44,0,Check-Out,2016-11-26
+BKG-013125,Resort Hotel,0,222,2015-09-14,1,1,2,0,0,HB,ESP,Groups,TA/TO,No Deposit,Transient,80,0,Check-Out,2015-09-16 00:00:00
+BKG-026254,Resort Hotel,0,120,2016-12-26,1,3,2,0,0,BB,BEL,Online TA,TA/TO,No Deposit,Transient-Party,54.8,3,Check-Out,2016-12-30
+BKG-046853,City Hotel,1,88,2017-02-17,0,2,2,0,0,SC,DEU,Online TA,TA/TO,No Deposit,Transient,79.2,0,Canceled,2016-11-25
+BKG-003025,Resort Hotel,0,79,24/12/2015,2,5,2,0,0,HB,GBR,Offline TA/TO,TA/TO,No Deposit,Transient,57.29,2,Check-Out,2015-12-31
+BKG-067318,City Hotel,0,41,2016-08-15,1,2,2,0,0,BB,PRT,Offline TA/TO,TA/TO,No Deposit,Transient,76.5,0,Check-Out,2016-08-18
+BKG-053272,City Hotel,1,239,17-Oct-2015,0,1,2,0,0,BB,PRT,Groups,TA/TO,Non Refund,Transient,60,0,Canceled,2015-08-17
+BKG-029615,Resort Hotel,0,23,20/04/2017,0,2,2,0,0,BB,gbr,Groups,Direct,No Deposit,Transient-Party,99,0,Check-Out,2017-04-22
+BKG-025774,Resort Hotel,0,34,09-Dec-2016,0,1,2,0,0,BB,PRT,Online TA,TA/TO,No Deposit,Transient,EUR 48.0,1,check-out,2016-12-10 00:00:00
+BKG-040021,City Hotel,1,38,2016/05/06,2,3,2,1,0,HB,FRA,Online TA,TA/TO,No Deposit,Transient,EUR 149.7,0,Canceled,2016-05-01
+BKG-085044,City Hotel,0,160,2017-07-15,2,5,2,0,0,BB,FRA,Online TA,TA/TO,No Deposit,Transient,78.35,1,Check-Out,2017-07-22 00:00:00
+BKG-024620,  Resort Hotel,0,32,2016-10-27,2,5,2,0,0,BB,FRA,Direct,Direct,No Deposit,Transient,91.85 EUR,0,Check-Out,2016-11-03
+BKG-018206,Resort Hotel,0,56,29-Mar-2016,0,4,2,0,0,BB,PRT,Online TA,TA/TO,No Deposit,Transient,58,1,Check-Out,2016-04-02
+BKG-036314,City Hotel,1,97,2015-10-05,1,3,1,0,0,BB,PRT,null,TA/TO,Non Refund,Transient,140,0,Canceled,2015-07-03
+BKG-029678,Resort Hotel,0,85,2017-04-19,1,4,2,0,0,BB,USA,Direct,Direct,No Deposit,Transient-Party,74.6,1,Check-Out,2017-04-24
+BKG-085474,City Hotel,no,278,2017-07-26,0,4,3,0,0,BB,deu,Online TA,TA/TO,No Deposit,Transient,165.6,2,Check-Out,2017-07-30 00:00:00
+BKG-042349,City Hotel,1,175,10/08/2016,0,4,2,0,0,BB,GBR,Online TA,TA/TO,No Deposit,Transient,99.45,0,Canceled,01/03/2016
+BKG-049603,City Hotel,1,26,2017-05-22,1,1,2,0,0,BB,PRT,Offline TA/TO,TA/TO,Non Refund,Transient,€128.00,0,Canceled,2017-04-26
+BKG-052815,City Hotel,1,360,12-Oct-2015,1,1,2,0,0,BB,PRT,Groups,TA/TO,Non Refund,Contract,62,0,Canceled,2015-01-01
+BKG-006899,Resort Hotel,1,378,2016-11-01,0,2,2,0,0,BB,PRT,Groups,TA/TO,Non Refund,Transient,46,0,Canceled,2016-10-18
+BKG-057154,City Hotel,no,32,2016-01-24,2,1,2,0,0,BB,ARG,Corporate,Corporate,No Deposit,Transient-Party,64,0,Check-Out,27/01/2016
+BKG-003088,Resort Hotel,0,165,2015-12-30,0,4,1,0,0,Undefined,PRT,Groups,TA/TO,No Deposit,Transient-Party,0,0,Check-Out,2016-01-03
+BKG-034967,City Hotel,0,4,2015-08-25,0,4,2,0,0,BB,PRT,Groups,TA/TO,No Deposit,Transient-Party,62,0,Check-Out,29.08.2015
+BKG-041314,City  Hotel,1,179,2016-07-01,0,2,2,0,0,BB,PRT,Groups,TA/TO,Non Refund,Transient,65,0,Canceled,2016-05-10
+BKG-070471,City Hotel,0,349,2016-10-04,1,5,2,0,0,  BB,DEU,Offline TA/TO,TA/TO,No Deposit,Transient-Party,123.33,0,Check-Out,2016-10-10
+BKG-037906,City Hotel,0,47,2016-02-18,0,3,2,0,0,BB,NLD,Online TA,TA/TO,No Deposit,Transient,90.3,0,Check-Out,2016-02-21
+BKG-053512,City Hotel,0,237,2015-09-14,1,2,1,0,0,BB,DEU,ONLINE TA,TA/TO,No Deposit,Transient-Party,80.75,0,Check-Out,2015-09-17
+BKG-069774,City Hotel,0,31,2016/09/27,0,1,2,0,0,BB,UGA,Online TA,TA/TO,No Deposit,Transient,126,0,Check-Out,2016-09-28
+BKG-064634,City Hotel,no,158,2016-07-01,1,2,2,2,0,BB,BEL,Online TA,TA/TO,No Deposit,Transient,168.3,1,Check-Out,2016-07-04
+BKG-073884,City Hotel,0,25,2016-12-13,0,4,1,0.0,0,BB,EST,Online TA,TA/TO,No Deposit,Transient,79.9,1,Check-Out,2016-12-17
+BKG-071257,City Hotel,0,386,"October 23, 2016",2,0,2,0,0,HB,DEU,Offline TA/TO,TA/TO,No Deposit,Transient-Party,115,1,Check-Out,25/10/2016
+BKG-023130,Resort Hotel,0,10,13/09/2016,0,2,2,0,0,BB,TUR,Online TA,TA/TO,No Deposit,Transient,109,0,Check-Out,15.09.2016
+BKG-038603,  City Hotel,0,76,2016-03-20,2,3,2,0,0,BB,AUT,Online TA,TA/TO,No Deposit,Transient,110.15 EUR,1,Check-Out,2016-03-25
+BKG-079717,City Hotel,N,42,2017-04-21,1,2,2,0,0,BB,bra,Online TA,TA/TO,No Deposit,Transient,156.67,2,Check-Out,2017-04-24 00:00:00
+BKG-005862,Resort Hotel,1,210,2016-08-22,3,8,2,0,0,HB,PRT,Online TA,TA/TO,No Deposit,Transient,192.73,2,Canceled,2016-02-15
+BKG-064308,City Hotel,0,4,2016-06-26,2,0,1,0,0,SC,NLD,Online TA,TA/TO,No Deposit,Transient,113,1,Check-Out,2016-06-28
+BKG-062899,City Hotel,0,33,2016-05-29,2,1,2,0,0,BB,PRT,Offline TA/TO,TA/TO,No Deposit,Transient,85.5,0,Check-Out,01.06.2016
+BKG-073940,City Hotel,0,7,2016-12-17,1,1,2,0,0,SC,PRT,Online TA,TA/TO,No Deposit,Transient,78,1,Check-Out,2016-12-19
+BKG-056416,City Hotel,0,21,2015-12-17,0,2,1,0,0,BB,PRT,Corporate,Corporate,No Deposit,Transient-Party,65,0,Check-Out,2015-12-19 00:00:00
+BKG-037115,City Hotel,1,160,2015-12-30,0,3,2,0,0,BB,PRT,Offline TA/TO,TA/TO,No Deposit,Transient-Party,€70.00,0,Canceled,2015-12-23
+BKG-019889,Resort Hotel,0,28,2016-05-19,2,5,3,0,0,BB,France,Offline TA/TO,TA/TO,No Deposit,Transient,79.9,2,Check-Out,2016-05-26
+BKG-053004,City Hotel,1,274,,2,2,2,0,0,BB,PRT,Groups,TA/TO,No Deposit,Transient-Party,62,0,Canceled,2015-07-06
+BKG-051342,  City Hotel,1,155,2017-07-17,1,1,2,0,0,SC,USA,Online TA,TA/TO,No Deposit,Transient,89.1,1,Canceled,2017-03-08
+BKG-006435,Resort Hotel,1,48,2016-09-30,2,3,2,0,0,BB,ESP,Online TA,TA/TO,No Deposit,Transient,107.00 EUR,0,Canceled,2016-08-14
+BKG-015776,Resort Hotel,0,25,2016-01-14,0,2,2,2,0,BB,esp,Online TA,TA/TO,No Deposit,Transient,79,1,Check-Out,2016-01-16
+BKG-021098,Resort Hotel,0,154,2016-07-11,1,2,2,0,0,BB,LUX,Offline TA/TO,TA/TO,No Deposit,Transient,64.8,0,Check-Out,2016-07-14 00:00:00
+BKG-056570,City Hotel,1,1,2015-12-29,0,4,2,0,1,BB,PRT,Groups,TA/TO,No Deposit,Transient,72.5,2,Canceled,2015-12-29
+BKG-053011,CITY HOTEL,1,364,2015-10-16,0,2,2,0,0,HB,PRT,Offline TA/TO,TA/TO,Non Refund,Transient-Party,101.5,0,Canceled,2015-07-06
+BKG-073749,City Hotel,false,18,2016-12-11,1,0,2,0,0,BB,Portugal,Offline TA/TO,ta/to,no deposit,Transient-Party,null,0,Check-Out,2016-12-12
+BKG-046003,City Hotel,1,21,2017-01-02,1,3,2,0,0,BB,KOR,Online TA,TA/TO,No Deposit,Transient,"90,10",2,Canceled,2016-12-16
+BKG-046847,City Hotel,Y,15,2017-02-17,0,2,2,0,0,BB,PRT,Offline TA/TO,TA/TO,Non Refund,Transient,95,0,Canceled,2017-02-02
+BKG-078012,City Hotel,0,22,2017/03/16,2,5,2,0,0,BB, GBR ,Offline TA/TO,TA/TO,No Deposit,Transient,68,1,Check-Out,2017-03-23
+BKG-010481,Resort Hotel,1,80,2017-08-26,2,2,2,0,0,BB ,PRT,Offline TA/TO,TA/TO,No Deposit,Contract,135,1,Canceled,2017-07-15
+BKG-055643,City Hotel,1,25,2015-12-08,0,2,1,0,0,BB,PRT,Offline TA/TO,TA/TO,Non Refund,Transient,90,0,Canceled,2015-11-17
+BKG-002685,Resort Hotel,0,164,2015-11-09,2,5,2,0,0,HB,FRA,Online TA,TA/TO,No Deposit,Transient,61.2,0,Check-Out,16/11/2015
+BKG-062115,City Hotel,0,69,"May 14, 2016",2,1,3,0,0,BB,DEU,Online TA,TA/TO,No Deposit,Transient,159.3,1,check-out,2016-05-17
+BKG-019749,Resort Hotel,0,3,2016-05-20,0,2,2,0,0,BB,ESP,Online TA,TA/TO,No Deposit,Transient,89,0,Check-Out,2016-05-22
+BKG-003576,  Resort Hotel,1,206,2016-03-21,2,5,2,0,0,BB,PRT,Online TA,TA/TO,No Deposit,Transient,42.69,1,Canceled,2015-08-31
+BKG-048843,City Hotel,1,157,01-May-2017,1,3,2,0,0,BB,PRT,Groups,TA/TO,Non Refund,Transient,130,0,Canceled,2016-11-25 00:00:00
+BKG-062620,City Hotel,0,30,2016-05-21,2,2,2,1,0,BB,BRA,Online TA,TA/TO,No Deposit,Transient,133.58,0,Check-Out,2016-05-25
+BKG-080688,CITY HOTEL,0,1,2017-05-09,0,1,1,0,0,SC,ESP,Online TA,  TA/TO,No Deposit,Transient,95,0,Check-Out,2017-05-10
+BKG-018871,Resort Hotel,0,32,2016-04-19,2,5,2,0,0,HB,GBR,Groups,Direct,No Deposit,Transient-Party ,38.22,0,Check-Out,2016-04-26
+BKG-020201,Resort Hotel,0,53,07/06/2016,0,2,2,0,0,BB,CHN,Online TA,TA/TO,No Deposit,Transient,129,1,Check-Out,2016-06-09
+BKG-011706,Resort Hotel,1,246,05/09/2015,2,5,2,0,0,BB,NULL,Offline TA/TO,TA/TO,No Deposit,Transient-Party,58.95,0,Canceled,2015-06-17
+BKG-044655,City Hotel,1,304,2016-11-03,0,3,2,0,0,BB,Portugal,Offline TA/TO,TA/TO,Non Refund,Transient ,89,0,Canceled,2016-02-01
+BKG-085331,City Hotel,0,127,2017-07-25,0,3,2,0,0,BB,AUT,Offline TA/TO,TA/TO,No Deposit,Transient,98.1,0,Check-Out,2017-07-28
+BKG-017311,Resort Hotel,0,0,17-Jan-2017,0,1,1,0,0,BB,ESP,Direct ,Direct,No Deposit,Transient,57,0,Check-Out,2017-01-18
+BKG-043180,City Hotel,1,113,2016-09-07,1,4,2,0,0,BB,PRT,Offline TA/TO,TA/TO,No Deposit,Transient,EUR 118.8,0,Canceled,23/05/2016
+BKG-084608,City Hotel,0,272,12-Jul-2017,0,3,2,2,0,BB,aut,Online TA,TA/TO ,No Deposit,Transient-Party,179.1,2,Check-Out,2017-07-15
+BKG-044697,CITY HOTEL,1,11,2016-11-05,0,1,2,1,0,BB,GBR,Online TA,TA/TO,No Deposit,Transient,150,1,Canceled,2016-10-28
+BKG-036799,City Hotel,1,98,2015-11-23,1,2,1,0,0,BB,PRT,Groups,TA/TO,No Deposit,Transient-Party,70,0,No-Show,23/11/2015
+BKG-052954,City Hotel,1,292,2015/08/05,0,2,2,0,0,BB,PRT,Groups,TA/TO,Non Refund,Transient-Party,62,0,Canceled,2015-07-02
+BKG-073440,City Hotel,0,16,2016-12-04,2,0,2,1,0,BB,ESP,Online TA,TA/TO,No Deposit,Transient,118.8,1,Check-Out,2016-12-06
+BKG-061039,City Hotel,0,70,2016/04/22,2,2,2,0,0,BB,NLD,Online TA,TA/TO,No Deposit,Transient,97.33,0,Check-Out,2016-04-26
+BKG-000565,Resort Hotel,1,49,2015-07-20,3,6,2,0,0,FB,PRT,Offline TA/TO,TA/TO,No Deposit,Transient,111.2,0,  Canceled,2015-06-01
+BKG-053063,City Hotel,1,379,31/10/2015,1,1,2,0,0,bb,PRT,Groups,TA/TO,Non Refund,Transient,62,0,Canceled,2015-07-23
+BKG-009818,Resort Hotel,true,289,2017-07-25,0,4,2,1.0,0,BB,AUS,Online TA,TA/TO,No Deposit,Transient,172.8,0,Canceled,2017-04-19 00:00:00
+BKG-004048,Resort Hotel,1,108,2016-04-29,2,2,2,0,0,HB,PRT,Groups,TA/TO,Non Refund,Transient,84,0,Canceled,2016-02-12 00:00:00
+BKG-025826,Resort Hotel,0,128,08-Dec-2016,0,3,2,0,0,BB,GBR,Online TA,TA/TO,No Deposit,Transient,36.04,2,Check-Out,2016-12-11
+BKG-018487,Resort Hotel,0,18,09/04/2016,2,3,1,0,0,BB,GBR,Offline TA/TO,TA/TO,No Deposit,Contract,33.30 EUR,0,Check-Out,2016-04-14
+BKG-010197,Resort Hotel,1,46,2017-08-12,2,5,2,0,0,BB,PRT,Offline TA/TO,TA/TO,No Deposit,Transient,212,0,Canceled,2017-07-12
+BKG-034516,City Hotel,0,4,11/08/2015,0,5,2,0,0,BB,FRA,Online TA,TA/TO,No Deposit,Contract,90,2,Check-Out,2015-08-16
+BKG-048519,CITY HOTEL,1,332,"April 22, 2017",1,1,2,1,0,BB,BEL,Online TA,TA/TO,no deposit,Transient,125.1,0,Canceled,2016-06-07
+BKG-076114,city hotel,0,28,2017-02-13,1,2,2,0,0,BB,FRA,Offline TA/TO,TA/TO,No Deposit,Transient,75,0,Check-Out,2017-02-16
+BKG-013679,Resort Hotel,0,1,13-Oct-2015,0,1,2,0,0,BB,USA,Online TA,TA/TO,No Deposit,Transient,66,1,Check-Out,14/10/2015
+BKG-036412,City Hotel,0,53,2015-10-09,1,2,2,0,0,BB,gbr,Online TA,TA/TO,NO DEPOSIT,Contract,94.5,0,Check-Out,2015-10-12 00:00:00
+BKG-002966,Resort Hotel,1,260,2015-12-20,4,9,1,0,0,BB,PRT,Online TA,TA/TO,No Deposit,Transient,47.54,1,Canceled,2015-08-24
+BKG-022672,Resort Hotel,0,166,2016-08-27,2,2,1,0,0,BB,GBR,Offline TA/TO,TA/TO,No Deposit,Transient-Party,100.8,0,Check-Out,2016-08-31
+BKG-084900,City Hotel,0,76,2017-07-16,2,3,2,0,0,BB,DEU,Direct,Direct,No Deposit,Transient,108,0,Check-Out,2017-07-21
+BKG-034399,  City Hotel,no,1,2015-08-09,1,0,2,2,0,BB,PRT,Online TA,TA/TO,No Deposit,Transient,153,2,Check-Out ,2015-08-10
+BKG-079332,City Hotel,0,172,2017/04/13,0,3,2,1,0,BB,ESP,Online TA,TA/TO,No Deposit,Transient,153,2,Check-Out,2017-04-16
+BKG-059563,City Hotel,0,2,2016-03-20,2,4,2,0,0,BB,PRT,Offline TA/TO,TA/TO,No Deposit,Transient-Party,85,0,Check-Out,2016-03-26
+BKG-026082,Resort Hotel,0,4,2017-06-06,0,3,1,0,0,BB,PRT,Offline TA/TO,TA/TO,No Deposit,Transient,108,2,Check-Out,2017-06-09
+BKG-087379,City Hotel,0,175,2017-08-31,1,3,2,0,0,BB,NLD,Offline TA/TO,TA/TO,No Deposit,Transient,EUR 86.8,2,Check-Out,2017-09-04
+BKG-036314,City Hotel,1,97,2015-10-05,1,3,1,0,0,BB,prt,Groups,TA/TO,Non Refund,Transient,"140,00",0,Canceled,2015-07-03
+BKG-010969,Resort Hotel,0,2,2015-10-09,0,1,1,0,0,BB,PRT,Groups,Corporate,No Deposit,Transient,48,0,Check-Out,2015-10-10
+BKG-000197,Resort Hotel,0,8,"July 07, 2015",0,4,3,2,0,BB,ESP,Online TA,TA/TO,No Deposit,Transient,EUR 193.0,1,Check-Out,11/07/2015
+BKG-012080,Resort Hotel,1,468,2016-05-12,0,2,2,0,0,HB,PRT,Groups,TA/TO,No Deposit,Transient-Party,67,0,Canceled,2015-07-30
+BKG-020286,Resort Hotel,0,36,2016-06-09,0,3,2.0,1,0,BB,ESP,Online TA,TA/TO,No Deposit,Transient,153.03,1,Check-Out,2016-06-12
+BKG-053339,City Hotel,1,262,2015-11-09,1,2,2,0,0,BB,PRT,Groups,TA/TO,Non Refund,Transient,62.80 EUR,0,Canceled,2015-09-04
+BKG-038515,City Hotel,1,91,2016-03-18,0,2,1,0,0,BB,PRT,Groups,TA/TO,Non Refund,Transient,75,0,Canceled,2016-02-03
+BKG-060520,City Hotel,0,50,2016-04-12,0,3,2,1,0,HB,FRA,Online TA,TA/TO,No Deposit,Transient,164.25,2,  Check-Out,2016-04-15
+BKG-071542,City Hotel,0,32,22/10/2016,2,5,2,0,0,BB,FRA,DIRECT,Direct,No Deposit,Transient,118,2,Check-Out,2016-10-29
+BKG-053523,City Hotel,1,19,2015-10-06,0,3,1,0,0,BB,PRT,Offline TA/TO,TA/TO,Non Refund,Transient,80,0,Canceled,17/09/2015
+BKG-061358,City Hotel,0,61,2016-04-30,1,1,2,0,0,BB,ESP,Offline TA/TO,TA/TO,No Deposit,Transient,89.75,1,Check-Out,2016-05-02
+BKG-085177,City Hotel,0,297,2017-07-21,2,2,2,1,0,BB,DEU,Direct,Direct,No Deposit,Transient,102.1,0,Check-Out,2017-07-25
+BKG-082616,City Hotel,0,131,2017-06-08,0,3,2,0.0,0,BB,USA,Online TA,TA/TO,No Deposit,Transient,144,1,Check-Out,11.06.2017
+BKG-011443,Resort Hotel,0,228,2016-09-05,6,15,2,0,0,HB,DEU,Direct,Direct,No Deposit,Transient,88,1,Check-Out,2016-09-26
+BKG-040697,City Hotel,1,330,02/06/2016,0,2,2,0,0,BB,PRT,Groups,TA/TO,Non Refund,Transient,62,0,Canceled,2015-10-21 00:00:00
+BKG-040339,City Hotel,1,53,2016-05-18,0,2,2,0.0,0,BB,BRA,Online TA,TA/TO,No Deposit,Transient,"126,90",0,Canceled,28/03/2016
+BKG-064293,City Hotel,0,144,2016-06-26,2,0,2,0,0,SC,United Kingdom,Online TA ,TA/TO,No Deposit,Transient-Party,85.5,1,Check-Out,28.06.2016
+BKG-015379,Resort Hotel,0,36,2015-12-27,2,0,2,0,0,HB,ESP,Offline TA/TO,TA/TO,No Deposit,Transient,55.4,0,Check-Out,2015-12-29
+BKG-048766,City Hotel,1,313,29-Apr-2017,2,1,2,0,0,BB,PRT,Offline TA/TO,TA/TO,Non Refund,Transient,90,0,Canceled,23.02.2017
+BKG-003912,Resort Hotel,yes,32,2016-04-19,2,5,2,0,0,HB,PRT,Groups,Direct,No Deposit,Transient-Party,69.36,0,Canceled,2016-03-18
+BKG-045543,City Hotel,1,524,15/12/2016,0,2,2,0,0,BB,PRT,Groups,TA/TO,Non Refund,Transient,EUR 62.8,0,Canceled,2015-10-21 00:00:00
+BKG-047584,City Hotel,1,56,2017-03-21,0,3,2,0,0,BB,PRT,Offline TA/TO,TA/TO,Non Refund,Transient,85,0,Canceled,2017-01-24
+BKG-042576,City Hotel,1,138,18/08/2016,0,2,3,0,0,BB,ARE,Online TA,TA/TO,No Deposit,Transient,"142,20",0,Canceled,18.08.2016
+BKG-067638,City Hotel,0,156,2016-08-21,2,1,2,0,0,SC,FRA,Online TA,TA/TO,No Deposit,Transient,"103,50",0,Check-Out,2016-08-24
+BKG-036234,City Hotel,0,164,2015-10-02,0,2,1,0,0,BB,PRT,Offline TA/TO,TA/TO,No Deposit,Transient-Party,100,0,Check-Out,2015-10-04
+BKG-010794,Resort Hotel,0,8,25-Nov-2015,0,1,1,0.0,0,BB,NULL,Corporate,Corporate,No Deposit,Transient,35,1,Check-Out,2015-11-26
+BKG-025181,Resort Hotel,0,2,2016-11-18,0,2,2,0,0,HB,DEU,Direct,TA/TO,No Deposit,Transient,73.8,2,Check-Out,2016-11-20
+BKG-041965,City Hotel,1,391,2016-07-27,0,2,2,0,0,BB,PRT,Groups,TA/TO,Non Refund,Transient,65,0,Canceled,2015-12-09
+BKG-073122,City Hotel,0,66,2016/11/24,0,3,2.0,0,0,BB,FRA,Offline TA/TO,TA/TO,No Deposit,Transient,75,0,Check-Out,2016-11-27
+BKG-042989,City Hotel,0,256,31-Aug-2016,0,4,2,0,0,BB,DEU,Online TA,TA/TO,No Deposit,Transient-Party,90.95,0,Check-Out,2016-09-04
+BKG-042732,City Hotel,1,94,23-Aug-2016,0,2,2,0,0,BB,GBR,Online TA,TA/TO,No Deposit,Transient,117.9,0,Canceled,2016-05-22
+BKG-027717,Resort Hotel,0,94,2017-02-13,1,3,3,0,0,HB,JAM,Groups,TA/TO,No Deposit,Transient-Party,88,0,Check-Out,2017-02-17
+BKG-036314,City Hotel,1,97,2015-10-05,1,3,1,0,0,BB,PRT,Groups,TA/TO,Non Refund,Transient,140,0,Canceled,2015-07-03
+BKG-058676,City Hotel,0,56,"March 03, 2016",1,3,2,0,0,BB,ESP,Groups,Corporate,No Deposit,TRANSIENT-PARTY,72,0,Check-Out,2016-03-07 00:00:00
+BKG-047970,City Hotel,1,191,2017-04-06,2,3,2,0,0,BB,PRT,ONLINE TA,TA/TO,No Deposit,Transient,88.4,0,Canceled,2016-09-28
+BKG-004988,Resort Hotel,1,9,2016-07-01,0,2,2,0,0,BB,PRT,Online TA,TA/TO,No Deposit,Transient,169,1,No-Show,2016-07-01
+BKG-071746,City Hotel,0,81,30/10/2016,2,1,2,0,0,BB,IRL,Direct,Direct,No Deposit,Transient,79.8,0,Check-Out,02/11/2016
+BKG-037410,City Hotel,1,150,2016-01-18,1,4,1,0.0,0,BB,PRT,Offline TA/TO,TA/TO,No Deposit,Transient-Party,80,0,Canceled,14.12.2015
+BKG-033622,  Resort Hotel,0,210,19/08/2017,2,5,3,0,0,HB,PRT,Offline TA/TO ,TA/TO,No Deposit,Transient,187.24,0,Check-Out,2017-08-26
+BKG-083141,City Hotel,0,448,2017-06-17,2,1,2,0,0,BB,GBR,Groups,TA/TO,No Deposit,Transient-Party,112.67,1,  Check-Out,2017-06-20
+BKG-065203,City Hotel,0,152,2016/07/10,2,2,2,0,0,BB,PRT,Online TA,ta/to,No Deposit,Transient,134.30 EUR,3,Check-Out,14/07/2016
+BKG-035285,City Hotel,0,14,2015-09-04,2,2,2,0,0,HB,ESP,Online TA,TA/TO,No Deposit,Transient,113,3,Check-Out,2015-09-08
+BKG-048483,City Hotel,true,135,21/04/2017,1,2,2,0,0,BB,PRT,Groups,TA/TO,Non Refund,Transient,90,0,Canceled,2016-12-07
+BKG-069973,City Hotel,no,36,2016-09-28,0,3,2,0,0,BB,Germany,Groups,TA/TO,No Deposit,Transient-Party,87.00 EUR,0,Check-Out,2016-10-01
+BKG-057321,City Hotel,0,70,2016-01-27,2,5,2,0,0,BB,DEU,Offline TA/TO,TA/TO,No Deposit,Transient,52,0,Check-Out,2016-02-03
+BKG-019522,Resort Hotel,0,236,12-May-2016,0,3,2,0,0,BB,GBR,Groups,TA/TO,No Deposit,Transient-Party,54,0,Check-Out,2016-05-15
+BKG-075711,City Hotel,0,1,03/02/2017,1,2,2,0,0,BB,ESP,Online TA,TA/TO,No Deposit,Transient,€117.00,1,Check-Out,2017-02-06
+BKG-049205,City Hotel,1,316,2017-05-10,0,2,2.0,0,0,BB,PRT,Online TA,TA/TO,No Deposit ,Transient,123.3,1,Canceled,2017-01-09
+BKG-036251,City Hotel,0,200,2015-10-02,1,2,2,0,0,BB,IRL,Online TA,TA/TO,No Deposit,Transient,89.25,1,Check-Out,2015-10-05
+BKG-044729,City Hotel,1,277,07-Nov-2016,1,2,2,0,0,BB, PRT ,Groups,TA/TO,Non Refund,Transient,100,0,Canceled,2016-04-04
+BKG-034398,City Hotel,0,2,"August 09, 2015",1,0,2,0,0,BB,PRT,Direct,Direct,No Deposit,Transient,67.5,2,Check-Out,10/08/2015
+BKG-030366,Resort Hotel,0,242,01/05/2017,4,10,2,0,0,HB,DEU,Offline TA/TO,TA/TO,No Deposit,Transient,84.15,1,Check-Out,2017-05-15
+BKG-057563,City Hotel,0,4,2016-02-07,2,2,1,0,0,  BB,FRA,Online TA,ta/to,No Deposit,Transient,"76,22",1,Check-Out,2016-02-11
+BKG-040787,City Hotel,1,56,2016/06/08,0,1,2,0,0,BB,PRT,Offline TA/TO,Corporate,No Deposit,Transient-Party,120,0,Canceled,2016-06-02
+BKG-043648,City Hotel,1,253,2016-09-26,1,2,1,0,0,BB,USA,Online TA,TA/TO,No Deposit ,Transient,2,0,Canceled,2016-01-18
+BKG-049669,City Hotel,1,357,2017/05/24,0,2,2,0,0,BB,GBR,Online TA,TA/TO,No Deposit,Transient,109.8,1,Canceled,2017-05-10
+BKG-050190,City Hotel,1,118,2017-06-10,0,1,2,0,0,BB,SWE,Online TA,TA/TO,No Deposit,Transient,160,0,Canceled,2017-04-26 00:00:00
+BKG-032798,Resort Hotel,0,170,2017-07-16,5,10,2,0,0,HB,FRA,Offline TA/TO,TA/TO,No Deposit,Transient,163.8,0,Check-Out,2017-07-31
+BKG-023574,Resort Hotel,0,207,2016-10-04,1,5,2,0,0,HB,GBR,Offline TA/TO,TA/TO,No Deposit,Transient,70,0,Check-Out,2016-10-10
+BKG-048308,City Hotel,1,87,2017-04-15,2,2,2,0,0,BB,PRT,Groups,TA/TO,Non Refund,Transient,EUR 95.0,0,Canceled,2017-01-18
+BKG-047430,City Hotel,1,37,2017-03-15,0,2,2,0,0,BB,PRT,Groups ,TA/TO,Non Refund,TRANSIENT,110,0,Canceled,2017-02-06
+BKG-079120,City Hotel,0,110,10-Apr-2017,1,2,2,0,0,SC,Ireland,Online TA,TA/TO,No Deposit,Transient,99,1,Check-Out,2017-04-13
+BKG-002601,Resort Hotel,0,0,2015-11-04,0,2,1,0,0,BB,PRT,Online TA ,TA/TO,no deposit,Transient,44.1,1,Check-Out,2015-11-06
+BKG-035929,City Hotel,true,74,18-Sep-2015,0,2,2,0,0,HB,PRT,Offline TA/TO,TA/TO,NON REFUND,Transient-Party,101.5,0,Canceled,2015-07-06
+BKG-028452,Resort Hotel,0,143,2017-03-05,2,5,2,0,0,HB,DEU,Offline TA/TO,TA/TO,No Deposit,Transient,52.40 EUR,0,Check-Out,2017-03-12
+BKG-036938,City Hotel,0,2,2015-12-11,0,1,2,0,0,SC,PRT,Online TA,TA/TO,No Deposit,Transient,94,0,Check-Out,2015-12-12
+BKG-040963,City Hotel,1,344,2016-06-16,0,2,2,0,0,BB,PRT,Groups,TA/TO,Non Refund ,Transient,62,0,CANCELED,21/10/2015
+BKG-045199,City Hotel,1,43,2016-11-29,4,11,1,0,0,BB,AGO,Online TA,TA/TO,No Deposit,Transient,74.8,1,Canceled,2016-11-14 00:00:00
+BKG-085961,City Hotel,0,100,01-Aug-2017,2,5,2,0,0,SC,NOR,Online TA,TA/TO,No Deposit,Transient-Party,125,0,Check-Out,2017-08-08
+BKG-033972,City Hotel,1,92,2015-07-01,2,4,2,0,0,BB,PRT,Online TA,TA/TO,No Deposit,Transient,76.5,2,Canceled,2015-06-23
+BKG-048277,City Hotel,1,215,2017-04-14,2,2,2,0,0,SC,CN,Online TA,TA/TO,No Deposit,Transient,110,1,Canceled,2016-10-31 00:00:00
+BKG-003910,resort hotel,1,208,2016-04-19,2,5,2,0,0,HB,PRT,Groups,Direct,Non Refund,Transient,60.3,0,Canceled,2016-03-18 00:00:00
+BKG-078302,City Hotel,0,158,2017-03-27,1,1,2,0,0,BB,ISR,Groups,TA/TO,No Deposit,Transient-Party,95,1,Check-Out,2017-03-29
+BKG-002158,RESORT HOTEL,1,78,2015-10-09,1,2,2,0,0,FB, ESP ,GROUPS,TA/TO,Non Refund,Transient,€92.00,0,Canceled,2015-08-14
+BKG-012145,Resort Hotel,0,49,2015-07-27,1,5,2,0,0,BB,PRT,Online TA,TA/TO,No Deposit,Transient,118.17,0,Check-Out,2015-08-02
+BKG-027832,Resort Hotel,0,0,2017-02-17,1,2,2.0,0,0,BB,deu,Direct,Direct,No Deposit,Transient,76,0,Check-Out,2017-02-20
+BKG-084268,City Hotel,0,133,2017-07-07,1,2,2,0,0,BB,DEU,Online TA,TA/TO,No Deposit,Transient,107.1,2,Check-Out,2017-07-10 00:00:00
+BKG-046339,City Hotel,Y,80,2017-01-20,0,2,2,0,0,BB,ESP,Online TA,TA/TO,No Deposit,Transient,93.6,0,Canceled,2017-01-04
+BKG-004111,Resort Hotel,1,199,2016-05-02,1,1,2,0,0,HB,PRT,groups,TA/TO,No Deposit,Transient-Party,85,0,Canceled,2016-04-18
+BKG-005305,Resort Hotel,1,40,2016-07-22,2,4,2,0,0,BB,DZA,Online TA,TA/TO,No Deposit,Transient,194,0,Canceled,12/06/2016
+BKG-044634,City Hotel,1,2,2016-11-02,0,2,1,0,0,BB,PRT,Aviation,Corporate,No Deposit,Transient,94,0,Canceled,2016-11-02 00:00:00
+BKG-059776,City Hotel,0,13,2016-03-27,2,2,2,0,0,BB,DEU,Offline TA/TO,TA/TO,No Deposit,Transient,79.15,0,Check-Out,2016-03-31
+BKG-072249,City Hotel,0,5,2016-11-06,2,3,2,0,0,SC,USA,Online TA,TA/TO,No Deposit,Transient,106.68,1,Check-Out,2016-11-11
+BKG-052892,City Hotel,1,153,2015-08-03,1,2,2,0,0,BB,PRT,Groups,TA/TO,Non Refund,Transient,60,0,Canceled,2015-05-19
+BKG-037742,City Hotel,0,54,08/02/2016,1,4,2,0,0,BB,DEU,Online TA,TA/TO,No Deposit,Transient,75.95,1,Check-Out,2016-02-13
+BKG-027586,Resort Hotel,0,10,12/02/2017,1,0,2,0,0,BB,PRT,Online TA,TA/TO,No Deposit,Transient,48,1,Check-Out,2017-02-13
+BKG-005501,Resort  Hotel,1,23,2016-08-04,0,3,2,1,0,HB,PRT,Online TA,TA/TO,No Deposit,Transient,272.7,0,Canceled,2016-07-30
+BKG-042197,City Hotel,0,235,2016-08-06,1,1,2,0,0,BB,PRT,Online TA,TA/TO,No Deposit,Transient-Party,€105.30,2,Check-Out,2016-08-08
+BKG-071716,City Hotel,0,242,28-Oct-2016,2,2,2,1,0,BB,FRA,Online TA,TA/TO,No Deposit,Transient,95.13,1,Check-Out,01/11/2016
+BKG-049296,city hotel,1,185,12/05/2017,2,3,2,0.0,0,SC,AUT,Online TA,TA/TO,No Deposit,Transient,"114,30",0,Canceled,2016-11-08
+BKG-044540,City Hotel,1,16,2016-10-29,2,1,2,0,0,BB,ESP,Online TA,TA/TO,No Deposit,Transient,140,2,Canceled,2016-10-24 00:00:00
+BKG-051192,City Hotel,1,229,12/07/2017,1,4,2,0,0,BB,PRT,Groups,TA/TO,Non Refund,Transient,110,0,Canceled,2016-11-25
+BKG-040502,City Hotel,1,158,2016-05-24,0,2,1,0,0,BB,PRT,Groups,TA/TO,Non Refund,Transient,130,0,Canceled,2016-01-18
+BKG-053901,City Hotel,0,17,2015-09-26,2,2,1,0,0,BB,USA,groups,TA/TO,No Deposit,Transient-Party,170,0,Check-Out,30.09.2015
+BKG-032749,RESORT HOTEL,0,149,2017-07-26,0,4,2,2,0,BB,CHE,Direct,Direct,No Deposit,Transient,211.25,0,Check-Out,30/07/2017
+BKG-002405,Resort Hotel,0,163,2015/10/23,1,2,1,0,0,BB,GBR,N/A,TA/TO,No Deposit,Transient-Party,"47,00",1,Check-Out,2015-10-26
+BKG-022027,Resort Hotel,0,1,2016-08-11,0,1,1,0,0,BB,PRT,Direct,Direct,No Deposit,Transient,149,0,Check-Out,12/08/2016
+BKG-018323,Resort Hotel,0,81,2016-04-03,2,3,2,0,0,BB,PRT,Online TA,TA/TO,No Deposit,Transient,52.2,1,Check-Out,08.04.2016

@@ -100,9 +100,10 @@ def run(args: argparse.Namespace) -> int:
 
             with stage(log, "load"):
                 conn = load.connect(settings.pg_connect_kwargs())
-                load.apply_schema(conn, settings.schema_path)
+                load.apply_schema(conn, settings.schema_path, settings.indexes_path)
                 load.start_run(conn, run_id, str(source), extracted.sha256)
                 counts["loaded"] = load.load_bookings(conn, run_id, validated.valid, rejected)
+                load.vacuum_analyze(conn)
                 load.finish_run(conn, run_id, "success", counts)
     except Exception as exc:
         log.exception("Pipeline run %s failed: %s", run_id, exc)

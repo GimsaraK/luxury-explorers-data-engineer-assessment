@@ -25,10 +25,15 @@ validates it with Python, and loads it into PostgreSQL for analysis, with AWS S3
 │   ├── validate.py        # business rules -> rejection reasons
 │   ├── load.py            # PostgreSQL: dimensions, COPY + upsert, audit tables
 │   └── logging_setup.py
+├── docs/
+│   └── query_performance.md   # generated before/after benchmark report
 ├── scripts/
-│   └── make_raw_dataset.py
+│   ├── make_raw_dataset.py
+│   └── benchmark_queries.py   # index before/after benchmark
 ├── sql/
-│   └── schema.sql         # star schema + etl audit tables
+│   ├── schema.sql             # star schema + etl audit tables
+│   ├── indexes.sql            # secondary indexes
+│   └── analytical_queries.sql # analytical queries
 ├── tests/
 │   └── test_transform.py
 ├── logs/                  # one log file per run (git-ignored)
@@ -235,17 +240,19 @@ in PostgreSQL (raw record as `JSONB`, reasons as `TEXT[]`).
 
 ### Load ([`etl/load.py`](etl/load.py))
 
-1. Apply [`sql/schema.sql`](sql/schema.sql) (idempotent `CREATE ... IF NOT EXISTS`).
+1. Apply [`sql/schema.sql`](sql/schema.sql) and [`sql/indexes.sql`](sql/indexes.sql) (idempotent `CREATE ... IF NOT EXISTS`).
 2. Register the run in `etl.pipeline_runs` with status `running`.
 3. Upsert the dimension members and map their surrogate keys onto the clean rows.
 4. Stream the clean rows into a temporary staging table with `COPY`, the fastest bulk-load path
    in PostgreSQL, instead of row-by-row `INSERT`s.
 5. Merge into `bookings` with `INSERT ... ON CONFLICT (booking_id) DO UPDATE`, so re-running the
    pipeline updates rows in place and never duplicates them.
-6. Insert the rejected records, then mark the run `success` (or `failed` with the error message).
+6. Insert the rejected records.
+7. `VACUUM (ANALYZE) bookings`, then mark the run `success` (or `failed` with the error message).
 
 Steps 3-6 run in **one transaction**: a failure rolls back the whole load, leaving the previous
-data untouched.
+data untouched. Step 7 matters because the upsert rewrites every row: vacuuming removes the
+replaced row versions and marks pages all-visible, which index-only scans rely on (see section 3).
 
 ### Schema ([`sql/schema.sql`](sql/schema.sql))
 
@@ -294,3 +301,79 @@ GROUP BY reason ORDER BY 2 DESC;
 ```bash
 docker exec -it hotel_bookings_pg psql -U etl_user -d hotel_bookings
 ```
+
+## 3. Database design and optimisation
+
+### Schema decisions
+
+| Decision | Reason |
+|---|---|
+| Star schema: `bookings` fact + 5 dimensions | Analytical queries group by hotel, country, segment, channel and customer type; dimensions keep those names in one place and the fact table narrow |
+| `SMALLINT` identity keys for dimensions, ISO-3 `CHAR(3)` natural key for country | Small, stable join keys; the country code is already a standard, meaningful identifier |
+| `booking_id` primary key on the fact table | The business key from the source system; makes the load idempotent via `ON CONFLICT` |
+| `NUMERIC(10,2)` for money, `SMALLINT` for counts | Exact decimal arithmetic for revenue (no float rounding); compact rows |
+| `CHECK` constraints mirroring the pipeline's validation rules, `NOT NULL` everywhere | The database enforces data quality on its own, even if something bypasses the pipeline |
+| `CHECK` lists for `meal`, `deposit_type`, `reservation_status` | 3-4 fixed values each; a dimension would only add a join |
+| Generated `total_nights` and `revenue` columns | One revenue definition for every query and report |
+| Separate `etl` schema with run lineage (`bookings.etl_run_id`) | Every row can be traced to the run and input file that loaded it |
+
+### Analytical queries ([`sql/analytical_queries.sql`](sql/analytical_queries.sql))
+
+| Query | Question | Brief's example |
+|---|---|---|
+| `q1_top_segments_by_revenue` | Top 10 market segments by revenue, 2016 Q3 arrivals | Top 10 categories by revenue |
+| `q2_monthly_revenue_growth` | City Hotel monthly revenue with month-over-month growth (`LAG()`) | Monthly growth analysis |
+| `q3_country_drilldown` | Germany: monthly bookings, average daily rate, cancellation rate | Drill-down by country |
+| `q4_adr_by_country` | Average daily rate and cancellation rate for the top 10 countries | Average rating by country (the dataset has no rating, so average daily rate stands in) |
+
+### Indexes ([`sql/indexes.sql`](sql/indexes.sql))
+
+| Index | Serves | Shape and why |
+|---|---|---|
+| `idx_bookings_arrival_segment_revenue` | q1 | `(arrival_date) INCLUDE (market_segment_id, revenue) WHERE NOT is_canceled`. The date range is the filter, so it leads. **Partial**: only non-canceled bookings carry revenue (72% of rows). **Covering**: every column q1 reads is in the index, so the table is never touched |
+| `idx_bookings_hotel_arrival_revenue` | q2 | `(hotel_id, arrival_date) INCLUDE (revenue) WHERE NOT is_canceled`. Equality column first, range/grouping column second, the standard composite-index order |
+| `idx_bookings_country_arrival` | q3 | `(country_code, arrival_date) INCLUDE (adr, is_canceled)`. Not partial, because the cancellation rate needs canceled bookings too |
+| `idx_rejected_records_run_id` | audit queries | PostgreSQL does not index foreign keys automatically; rejected records are always looked up by run |
+
+### Results
+
+Run `python scripts/benchmark_queries.py`. It drops the indexes, measures every query, creates
+the indexes and measures again (median of 7 `EXPLAIN ANALYZE` runs, warm cache, PostgreSQL 16,
+85,926 bookings). Full plans are in [`docs/query_performance.md`](docs/query_performance.md).
+
+| Query | Before | After | Speed-up | Pages read | Plan before -> after |
+|---|---:|---:|---:|---:|---|
+| q1 top segments | 7.53 ms | 1.84 ms | **4.1x** | 3,085 -> 37 | Seq Scan -> Index Only Scan |
+| q2 monthly growth | 14.99 ms | 9.21 ms | 1.6x | 3,086 -> 146 | Seq Scan -> Index Only Scan |
+| q3 country drill-down | 5.77 ms | 1.48 ms | **3.9x** | 3,084 -> 25 | Seq Scan -> Index Only Scan |
+| q4 ADR by country | 15.53 ms | 12.81 ms | 1.2x | 3,136 -> 387 | Seq Scan -> Index Only Scan |
+
+The page counts matter more than the milliseconds. On a warm cache the whole 24 MB table is
+already in memory, so scanning it is cheap. On a cold cache, or with a table larger than memory,
+every one of those ~3,085 pages is a disk read, and the gap grows with the table.
+
+### Optimisation decisions
+
+- **Selective queries benefit most.** q1 and q3 touch about 10% and 6% of the rows; their indexes
+  cut the pages read by about 100x.
+- **Covering + partial beats a plain index.** A plain `(arrival_date)` index would still have to
+  visit the table for `revenue` and `market_segment_id` on every matching row. `INCLUDE` turns
+  that into an index-only scan, and `WHERE NOT is_canceled` keeps each index under 2 MB, against
+  24 MB for the table.
+- **Non-selective queries barely benefit.** q2 reads 43% of the table and q4 reads all of it, so
+  their time goes on aggregation, not on reading. q4 got no index of its own; the planner reuses
+  the country index as a narrower copy of the table, which helps a little. The real fix for
+  dashboard-style full aggregations is pre-aggregation (a materialized view or summary table
+  refreshed by the pipeline), not more indexes.
+- **Index-only scans need a vacuumed table.** They skip the table only for pages marked
+  all-visible, so the pipeline runs `VACUUM (ANALYZE)` after every load. Afterwards the plans
+  show `Heap Fetches: 0`.
+- **Indexes not created:**
+  - Single-column indexes on low-cardinality foreign keys (`hotel_id` has 2 values,
+    `market_segment_id` 8). The planner would not use them, and each one slows every upsert.
+  - A BRIN index on `arrival_date`. Rows arrive in random order, so the per-block date ranges
+    would all overlap. With time-ordered loads at larger volumes BRIN becomes attractive (see
+    section 5).
+- **Every index has a write cost.** The three `bookings` indexes add 6.4 MB and are maintained on
+  every upsert. At this size the load is still about 7 seconds; at millions of rows, bulk loads
+  would drop and rebuild the indexes, or load into partitions.

@@ -18,6 +18,7 @@ class Settings:
     rejected_dir: Path
     log_dir: Path
     schema_path: Path
+    indexes_path: Path
     pg_host: str
     pg_port: int
     pg_database: str
@@ -49,6 +50,7 @@ def load_settings() -> Settings:
         rejected_dir=ROOT / "data" / "rejected",
         log_dir=ROOT / "logs",
         schema_path=ROOT / "sql" / "schema.sql",
+        indexes_path=ROOT / "sql" / "indexes.sql",
         pg_host=os.getenv("PGHOST", "localhost"),
         pg_port=int(os.getenv("PGPORT", "5433")),
         pg_database=os.getenv("PGDATABASE", "hotel_bookings"),

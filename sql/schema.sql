@@ -18,8 +18,14 @@ CREATE TABLE IF NOT EXISTS etl.pipeline_runs (
     rows_duplicates  INTEGER      CHECK (rows_duplicates >= 0),
     rows_rejected    INTEGER      CHECK (rows_rejected >= 0),
     rows_loaded      INTEGER      CHECK (rows_loaded >= 0),
-    error_message    TEXT
+    error_message    TEXT,
+    raw_s3_uri       TEXT,
+    processed_s3_uri TEXT
 );
+
+-- Added with the S3 integration; keeps databases created before it in step.
+ALTER TABLE etl.pipeline_runs ADD COLUMN IF NOT EXISTS raw_s3_uri TEXT;
+ALTER TABLE etl.pipeline_runs ADD COLUMN IF NOT EXISTS processed_s3_uri TEXT;
 
 CREATE TABLE IF NOT EXISTS etl.rejected_records (
     rejected_id  BIGINT       GENERATED ALWAYS AS IDENTITY PRIMARY KEY,

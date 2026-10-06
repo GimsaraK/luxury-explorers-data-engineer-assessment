@@ -24,6 +24,7 @@ class Settings:
     pg_database: str
     pg_user: str
     pg_password: str | None
+    s3_bucket: str | None
 
     def pg_connect_kwargs(self) -> dict[str, object]:
         if not self.pg_password:
@@ -56,4 +57,5 @@ def load_settings() -> Settings:
         pg_database=os.getenv("PGDATABASE", "hotel_bookings"),
         pg_user=os.getenv("PGUSER", "etl_user"),
         pg_password=os.getenv("PGPASSWORD"),
+        s3_bucket=os.getenv("S3_BUCKET") or None,
     )
